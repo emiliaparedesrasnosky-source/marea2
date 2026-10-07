@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inicio</title>
+  
+  <!-- Carga de la fuente EB Garamond de Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .carrusel-container {
+      position: relative;
+      max-width: 900px;
+      margin: 2rem auto;
+      overflow: hidden;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      background: #fff;
+      font-family: 'EB Garamond', serif;
+    }
+
+    .carrusel-slide {
+      display: none;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 2rem;
+      padding: 1.5rem;
+    }
+
+    .carrusel-slide.active {
+      display: grid;
+    }
+
+    .carrusel-imagen img {
+      width: 100%;
+      height: auto;
+      max-height: 450px;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+
+    .carrusel-contenido {
+      padding: 1rem;
+    }
+
+    .carrusel-contenido .badge {
+      display: inline-block;
+      background-color: #2e7d32;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      margin-bottom: 0.8rem;
+      font-family: sans-serif;
+    }
+
+    .carrusel-contenido h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: #1a1a1a;
+    }
+
+    .carrusel-contenido p {
+      font-size: 1.15rem;
+      line-height: 1.6;
+      color: #4a4a4a;
+    }
+
+    /* Botones Flechas */
+    .prev-btn,
+    .next-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      font-size: 1.5rem;
+      padding: 12px 16px;
+      cursor: pointer;
+      border-radius: 50%;
+      transition: background 0.3s;
+      z-index: 10;
+    }
+
+    .prev-btn:hover,
+    .next-btn:hover {
+      background: rgba(0, 0, 0, 0.8);
+    }
+
+    .prev-btn {
+      left: 10px;
+    }
+
+    .next-btn {
+      right: 10px;
+    }
+
+    /* Adaptación para pantallas pequeñas */
+    @media (max-width: 768px) {
+      .carrusel-slide {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <a href="index.html">Inicio</a>
+    <a href="novedades.html">Novedades</a>
+    <a href="galeria.html">Galería</a>
+    <a href="acercaDe.html">Acerca de nosotrxs</a>
+    <a href="juego2.html">Mini-Juego</a>
+    <a href="juego.html">Escribí en la arena</a>
+    <a href="contacto.html">Sumate</a>
+  </nav>
+   <header class="header-principal">
+
+        <h1>M.A.R.E.A</h1>
+        <p>Movimiento Argentino de Restauración Ecológica Acuática</p>
+    </header>
+
+  <section class="carrusel-container">
+    <div class="carrusel-slide active">
+      <!-- Nombre de archivo corregido a image1.jpg -->
+      <div class="carrusel-imagen"><img src="image1.jpeg" alt="Últimas Noticias - Booms de Pelo"></div>
+      <div class="carrusel-contenido">
+        <span class="badge">Sustentabilidad</span>
+        <h2>Booms de Pelo</h2>
+        <p>Chile ha creado un filtro sustentable compuesto por una red con pelo humano y animal para descontaminar el agua y evitar la obstrucción de desagües.</p>
+      </div>
+    </div>
+    <div class="carrusel-slide">
+      <!-- Nombre de archivo corregido a image2.jpg -->
+      <div class="carrusel-imagen"><img src="image2.jpeg" alt="El Ladrillo que Viste al Planeta"></div>
+      <div class="carrusel-contenido">
+        <span class="badge">Textil & Construcción</span>
+        <h2>Ladrillo de Ropa Reciclada</h2>
+        <p>Un ladrillo ecológico, impermeable y resistente al fuego hecho con ropa vieja para darle una segunda vida a los desechos de la industria textil.</p>
+      </div>
+    </div>
+    <div class="carrusel-slide">
+      <!-- Nombre de archivo corregido a image3.jpg -->
+      <div class="carrusel-imagen"><img src="image3.jpeg" alt="Basura Útil - Útiles Escolares"></div>
+      <div class="carrusel-contenido">
+        <span class="badge">Reciclaje</span>
+        <h2>Basura Útil</h2>
+        <p>Transformación de residuos y telgopor desechado en útiles escolares esenciales, aprovechando materiales para la vida cotidiana.</p>
+      </div>
+    </div>
+
+    <!-- Botones de navegación -->
+    <button class="prev-btn" onclick="cambiarSlide(-1)">&#10094;</button>
+    <button class="next-btn" onclick="cambiarSlide(1)">&#10095;</button>
+  </section>
+
+  <script>
+    let currentIndex = 0;
+
+    function mostrarSlide(index) {
+      const slides = document.querySelectorAll('.carrusel-slide');
+      slides.forEach((slide, i) => {
+        slide.classList.remove('active');
+        if (i === index) {
+          slide.classList.add('active');
+        }
+      });
+    }
+
+    window.cambiarSlide = function(direccion) {
+      const slides = document.querySelectorAll('.carrusel-slide');
+      currentIndex += direccion;
+      if (currentIndex >= slides.length) {
+        currentIndex = 0;
+      } else if (currentIndex < 0) {
+        currentIndex = slides.length - 1;
+      }
+      mostrarSlide(currentIndex);
+    };
+  </script>
+</body>
+
+</html>

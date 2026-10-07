@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>¡EcoGuardines! - Limpieza de la Playa 2D</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap');
+
+        * {
+            font-family: 'Fredoka', cursive, sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #0284c7;
+        }
+
+        .btn-cartoon {
+            transition: all 0.15s ease;
+            box-shadow: 0 8px 0 rgba(0, 0, 0, 0.25);
+        }
+
+        .btn-cartoon:active {
+            transform: translateY(4px);
+            box-shadow: 0 4px 0 rgba(0, 0, 0, 0.25);
+        }
+
+        .card-cartoon {
+            box-shadow: 0 12px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        /* Bounce Animation */
+        @keyframes bounceSlight {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        .animate-bounce-slight {
+            animation: bounceSlight 2s infinite ease-in-out;
+        }
+
+        /* Pulse glow */
+        @keyframes pulseGlow {
+
+            0%,
+            100% {
+                transform: scale(1);
+                filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.8));
+            }
+
+            50% {
+                transform: scale(1.08);
+                filter: drop-shadow(0 0 14px rgba(255, 255, 255, 1));
+            }
+        }
+
+        .pulse-glow {
+            animation: pulseGlow 1.5s infinite ease-in-out;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <a href="index.html">Inicio</a>
+        <a href="novedades.html">Novedades</a>
+        <a href="galeria.html">Galería</a>
+        <a href="acercaDe.html">Acerca de nosotrxs</a>
+        <a href="juego2.html">Mini-Juego</a>
+        <a href="juego.html">Escribí en la arena</a>
+        <a href="contacto.html">Sumate</a>
+    </nav>
+
+    <div class="relative w-screen h-screen overflow-hidden text-slate-800">
+
+        <!-- Canvas Principal para el Juego -->
+        <canvas id="gameCanvas" class="absolute inset-0 w-full h-full block z-0"></canvas>
+
+        <!-- ========================================== -->
+        <!-- 1. PANTALLA DE SELECCIÓN DE PERSONAJE      -->
+        <!-- ========================================== -->
+        <div id="selectionModal"
+            class="absolute inset-0 z-50 flex items-center justify-center p-4 bg-sky-900/70 backdrop-blur-md">
+            <div
+                class="bg-amber-100 border-8 border-amber-400 rounded-3xl p-6 sm:p-8 max-w-2xl w-full text-center card-cartoon relative overflow-hidden">
+                <!-- Sol decorativo caricatura -->
+                <div
+                    class="absolute -top-10 -right-10 w-28 h-28 bg-yellow-300 rounded-full border-4 border-yellow-500 flex items-center justify-center animate-spin-slow">
+                    <span class="text-3xl">☀️</span>
+                </div>
+
+                <div
+                    class="inline-block bg-sky-400 text-white font-bold px-4 py-1.5 rounded-full text-sm border-2 border-sky-600 mb-2 uppercase tracking-wide">
+                    ¡Juego 2D Educativo! 🌊
+                </div>
+
+                <h1 class="text-3xl sm:text-5xl font-black text-sky-900 tracking-wide mb-2 drop-shadow-sm">
+                    ¡EcoGuardia de la Playa!
+                </h1>
+                <p class="text-amber-900 font-semibold text-base sm:text-lg mb-6">
+                    ¡Elige a tu amiguito y ayuda a juntar toda la basura para salvar a la naturaleza!
+                </p>
+
+                <!-- Selección de Personaje -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                    <!-- Tortuga -->
+                    <div id="cardTurtle" onclick="selectCharacter('turtle')"
+                        class="cursor-pointer bg-emerald-200 border-4 border-emerald-500 hover:bg-emerald-300 rounded-2xl p-4 transition-all duration-200 text-center relative card-cartoon group">
+                        <div class="w-24 h-24 mx-auto mb-2 relative flex items-center justify-center">
+                            <canvas id="previewTurtle" width="100" height="100"
+                                class="group-hover:scale-110 transition-transform"></canvas>
+                        </div>
+                        <span
+                            class="bg-emerald-600 text-white font-bold text-xs px-3 py-1 rounded-full uppercase">Experta
+                            del Mar</span>
+                        <h3 class="text-2xl font-black text-emerald-950 mt-1">Tortuguita</h3>
+                        <p class="text-xs text-emerald-900 font-medium mt-1">¡Rápida nadando en el agua! Se mueve con
+                            mucha agilidad por el mar.</p>
+                    </div>
+
+                    <!-- Escarabajo -->
+                    <div id="cardBeetle" onclick="selectCharacter('beetle')"
+                        class="cursor-pointer bg-amber-200 border-4 border-amber-500 hover:bg-amber-300 rounded-2xl p-4 transition-all duration-200 text-center relative card-cartoon group">
+                        <div class="w-24 h-24 mx-auto mb-2 relative flex items-center justify-center">
+                            <canvas id="previewBeetle" width="100" height="100"
+                                class="group-hover:scale-110 transition-transform"></canvas>
+                        </div>
+                        <span class="bg-amber-600 text-white font-bold text-xs px-3 py-1 rounded-full uppercase">Experto
+                            de la Arena</span>
+                        <h3 class="text-2xl font-black text-amber-950 mt-1">Escarabajo</h3>
+                        <p class="text-xs text-amber-900 font-medium mt-1">¡Rápido caminando en las dunas! Explora la
+                            arena buscando residuos.</p>
+                    </div>
+                </div>
+
+                <!-- Botón Jugar -->
+                <button id="startPlayBtn" onclick="startGame()"
+                    class="w-full sm:w-auto px-10 py-4 bg-emerald-400 hover:bg-emerald-300 border-4 border-emerald-600 text-emerald-950 text-2xl font-black rounded-2xl btn-cartoon cursor-pointer transition">
+                    ¡EMPEZAR A JUGAR! 🚀
+                </button>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 2. HUD INTERFAZ EN JUEGO                  -->
+        <!-- ========================================== -->
+        <div id="gameHUD"
+            class="hidden absolute inset-0 z-10 pointer-events-none flex flex-col justify-between p-3 sm:p-5">
+            <!-- Panel Superior -->
+            <div class="flex justify-between items-center gap-2">
+                <!-- Icono Jugador & Puntaje -->
+                <div
+                    class="bg-white/90 border-4 border-sky-600 rounded-2xl p-2.5 sm:px-4 sm:py-2 flex items-center gap-3 pointer-events-auto shadow-lg">
+                    <div id="hudAvatar"
+                        class="w-10 h-10 sm:w-12 sm:h-12 bg-sky-100 rounded-xl border-2 border-sky-400 flex items-center justify-center overflow-hidden">
+                        <canvas id="hudAvatarCanvas" width="48" height="48"></canvas>
+                    </div>
+                    <div>
+                        <div id="hudHeroTitle" class="text-xs font-bold text-sky-700 uppercase">Tortuguita</div>
+                        <div id="scoreText" class="text-xl sm:text-2xl font-black text-sky-950">0 Pts</div>
+                    </div>
+                </div>
+
+                <!-- Contador de Basura y Barra de Progreso -->
+                <div
+                    class="bg-white/90 border-4 border-amber-500 rounded-2xl p-2.5 sm:px-5 sm:py-2 flex flex-col items-center pointer-events-auto shadow-lg max-w-[220px] sm:max-w-xs w-full">
+                    <div class="flex justify-between w-full text-xs sm:text-sm font-black text-amber-950 mb-1">
+                        <span>🚯 Basura Restante:</span>
+                        <span id="trashCountText" class="text-rose-600 font-mono">15/15</span>
+                    </div>
+                    <div class="w-full bg-slate-200 border-2 border-amber-600 h-4 rounded-full overflow-hidden">
+                        <div id="progressBar"
+                            class="bg-gradient-to-r from-emerald-400 to-green-500 h-full rounded-full transition-all duration-300 w-0">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botones de Audio y Menú -->
+                <div class="flex items-center gap-2 pointer-events-auto">
+                    <button onclick="toggleAudio()"
+                        class="w-11 h-11 sm:w-12 sm:h-12 bg-yellow-300 hover:bg-yellow-200 border-4 border-yellow-600 rounded-2xl flex items-center justify-center text-yellow-950 btn-cartoon">
+                        <i id="soundIcon" data-lucide="volume-2" class="w-6 h-6"></i>
+                    </button>
+                    <button onclick="resetToMenu()"
+                        class="w-11 h-11 sm:w-12 sm:h-12 bg-rose-400 hover:bg-rose-300 border-4 border-rose-600 rounded-2xl flex items-center justify-center text-rose-950 btn-cartoon">
+                        <i data-lucide="rotate-ccw" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Controles Táctiles (Móviles) -->
+            <div class="flex justify-between items-end pointer-events-auto sm:hidden mb-2">
+                <!-- D-Pad Direccional Táctil -->
+                <div
+                    class="grid grid-cols-3 gap-1.5 w-36 h-36 bg-white/80 border-4 border-sky-600 p-2 rounded-3xl shadow-xl">
+                    <div></div>
+                    <button id="btnUp"
+                        class="bg-sky-400 active:bg-sky-500 border-2 border-sky-600 rounded-xl flex items-center justify-center text-white"><i
+                            data-lucide="chevron-up" class="w-8 h-8"></i></button>
+                    <div></div>
+                    <button id="btnLeft"
+                        class="bg-sky-400 active:bg-sky-500 border-2 border-sky-600 rounded-xl flex items-center justify-center text-white"><i
+                            data-lucide="chevron-left" class="w-8 h-8"></i></button>
+                    <button id="btnDown"
+                        class="bg-sky-400 active:bg-sky-500 border-2 border-sky-600 rounded-xl flex items-center justify-center text-white"><i
+                            data-lucide="chevron-down" class="w-8 h-8"></i></button>
+                    <button id="btnRight"
+                        class="bg-sky-400 active:bg-sky-500 border-2 border-sky-600 rounded-xl flex items-center justify-center text-white"><i
+                            data-lucide="chevron-right" class="w-8 h-8"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 3. MODAL DE VICTORIA                       -->
+        <!-- ========================================== -->
+        <div id="victoryModal"
+            class="hidden absolute inset-0 z-50 flex items-center justify-center p-4 bg-sky-900/80 backdrop-blur-md">
+            <div
+                class="bg-yellow-100 border-8 border-yellow-400 rounded-3xl p-6 sm:p-8 max-w-lg w-full text-center card-cartoon relative animate-bounce-slight">
+                <div class="text-6xl mb-2">🏆</div>
+                <h2 class="text-3xl sm:text-4xl font-black text-amber-950 mb-1">¡PLAYA FRESCA Y LIMPIA!</h2>
+                <p class="text-amber-900 font-semibold text-sm mb-4">¡Eres un héroe del medio ambiente! Recolectaste
+                    toda la basura.</p>
+
+                <!-- Datos Educativos Divertidos -->
+                <div
+                    class="bg-white/90 border-4 border-amber-300 rounded-2xl p-4 text-left mb-6 space-y-2 text-xs font-bold text-slate-700">
+                    <div class="text-amber-900 font-extrabold text-sm border-b border-amber-200 pb-1 mb-2 text-center">
+                        💡 ¿Sabías cuánto tarda en desaparecer la basura?
+                    </div>
+                    <div class="flex items-center justify-between bg-amber-50 p-2 rounded-lg">
+                        <span>💩 Pañales Sucios:</span>
+                        <span class="text-rose-600 font-black">¡500 Años!</span>
+                    </div>
+                    <div class="flex items-center justify-between bg-amber-50 p-2 rounded-lg">
+                        <span>🍾 Botellas de Plástico:</span>
+                        <span class="text-rose-600 font-black">450 Años</span>
+                    </div>
+                    <div class="flex items-center justify-between bg-amber-50 p-2 rounded-lg">
+                        <span>🛍️ Bolsas de Plástico:</span>
+                        <span class="text-rose-600 font-black">150 Años</span>
+                    </div>
+                    <div class="flex items-center justify-between bg-amber-50 p-2 rounded-lg">
+                        <span>🚬 Colillas de Cigarrillo:</span>
+                        <span class="text-rose-600 font-black">10 Años (¡Muy tóxicas!)</span>
+                    </div>
+                </div>
+
+                <button onclick="resetToMenu()"
+                    class="w-full py-4 bg-emerald-400 hover:bg-emerald-300 border-4 border-emerald-600 text-emerald-950 text-xl font-black rounded-2xl btn-cartoon transition">
+                    ¡VOLVER A JUGAR! 🔄
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // SINTETIZADOR DE AUDIO (Web Audio API)
+        // ==========================================
+        class SoundEngine {
+            constructor() {
+                this.ctx = null;
+                this.muted = false;
+            }
+
+            init() {
+                if (!this.ctx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    this.ctx = new AudioContext();
+                }
+                if (this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            }
+
+            playPop() {
+                if (this.muted || !this.ctx) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.exponentialRampToValueAtTime(800, now + 0.1);
+
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                osc.start(now);
+                osc.stop(now + 0.1);
+            }
+
+            playWin() {
+                if (this.muted || !this.ctx) return;
+                const notes = [400, 500, 600, 800];
+                notes.forEach((freq, idx) => {
+                    const now = this.ctx.currentTime + idx * 0.1;
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, now);
+
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+
+                    osc.start(now);
+                    osc.stop(now + 0.2);
+                });
+            }
+        }
+
+        const sounds = new SoundEngine();
+
+        function toggleAudio() {
+            sounds.muted = !sounds.muted;
+            const icon = document.getElementById('soundIcon');
+            icon.setAttribute('data-lucide', sounds.muted ? 'volume-x' : 'volume-2');
+            lucide.createIcons();
+        }
+
+        // ==========================================
+        // VARIABLES GLOBALES DEL JUEGO
+        // ==========================================
+        let canvas, ctx;
+        let selectedCharacter = 'turtle'; // 'turtle' o 'beetle'
+        let gameActive = false;
+
+        let player = {
+            x: 0,
+            y: 0,
+            radius: 24,
+            speed: 4,
+            angle: 0,
+            animFrame: 0
+        };
+
+        const keys = {ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false, w: false, a: false, s: false, d: false};
+        let trashItems = [];
+        let sparkles = [];
+
+        const TOTAL_TRASH = 15;
+        let score = 0;
+        let trashCollected = 0;
+
+        // Configuración de Tipos de Basura
+        const TRASH_TYPES = [
+            {id: 'diaper', name: 'Pañal Sucio', emoji: '💩', points: 150, color: '#fef08a'},
+            {id: 'bottle', name: 'Botella de Plástico', emoji: '🍾', points: 100, color: '#38bdf8'},
+            {id: 'bag', name: 'Bolsa de Plástico', emoji: '🛍️', points: 120, color: '#e879f9'},
+            {id: 'paper', name: 'Envoltorio', emoji: '🍬', points: 80, color: '#f43f5e'},
+            {id: 'cigarette', name: 'Colilla', emoji: '🚬', points: 90, color: '#fb923c'}
+        ];
+
+        // ==========================================
+        // DIBUJO CARICATURESCO (Canvas 2D Sprites)
+        // ==========================================
+
+        // Dibujar Tortuga Caricatura
+        function drawTurtleSprite(c, x, y, radius, angle, animFrame) {
+            c.save();
+            c.translate(x, y);
+            c.rotate(angle);
+
+            const flipperOffset = Math.sin(animFrame * 0.2) * 0.25;
+
+            // Aletas Traseras
+            c.fillStyle = '#15803d';
+            c.beginPath();
+            c.ellipse(-14, -12, 10, 5, -0.4, 0, Math.PI * 2);
+            c.ellipse(-14, 12, 10, 5, 0.4, 0, Math.PI * 2);
+            c.fill();
+
+            // Aletas Delanteras Animadas
+            c.beginPath();
+            c.ellipse(8, -16, 16, 7, -0.6 + flipperOffset, 0, Math.PI * 2);
+            c.ellipse(8, 16, 16, 7, 0.6 - flipperOffset, 0, Math.PI * 2);
+            c.fill();
+            c.strokeStyle = '#166534';
+            c.lineWidth = 3;
+            c.stroke();
+
+            // Caparazón Verde
+            c.fillStyle = '#22c55e';
+            c.beginPath();
+            c.ellipse(0, 0, 18, 15, 0, 0, Math.PI * 2);
+            c.fill();
+            c.strokeStyle = '#15803d';
+            c.lineWidth = 4;
+            c.stroke();
+
+            // Detalles del caparazón
+            c.fillStyle = '#16a34a';
+            c.beginPath();
+            c.arc(0, 0, 7, 0, Math.PI * 2);
+            c.fill();
+
+            // Cabeza
+            c.fillStyle = '#4ade80';
+            c.beginPath();
+            c.arc(18, 0, 10, 0, Math.PI * 2);
+            c.fill();
+            c.strokeStyle = '#15803d';
+            c.lineWidth = 3;
+            c.stroke();
+
+            // Ojos Caricatura Lindos
+            c.fillStyle = '#ffffff';
+            c.beginPath();
+            c.arc(21, -4, 4, 0, Math.PI * 2);
+            c.arc(21, 4, 4, 0, Math.PI * 2);
+            c.fill();
+
+            c.fillStyle = '#0f172a';
+            c.beginPath();
+            c.arc(22, -4, 2, 0, Math.PI * 2);
+            c.arc(22, 4, 2, 0, Math.PI * 2);
+            c.fill();
+
+            c.restore();
+        }
+
+        // Dibujar Escarabajo Caricatura
+        function drawBeetleSprite(c, x, y, radius, angle, animFrame) {
+            c.save();
+            c.translate(x, y);
+            c.rotate(angle);
+
+            const legWave = Math.sin(animFrame * 0.3) * 3;
+
+            // Patitas Animadas
+            c.strokeStyle = '#78350f';
+            c.lineWidth = 3.5;
+            c.lineCap = 'round';
+
+            for (let i = -1; i <= 1; i++) {
+                c.beginPath();
+                c.moveTo(i * 8, -8);
+                c.lineTo(i * 10 + legWave, -18);
+                c.stroke();
+
+                c.beginPath();
+                c.moveTo(i * 8, 8);
+                c.lineTo(i * 10 - legWave, 18);
+                c.stroke();
+            }
+
+            // Antenas
+            c.beginPath();
+            c.moveTo(14, -4);
+            c.lineTo(22, -10);
+            c.moveTo(14, 4);
+            c.lineTo(22, 10);
+            c.stroke();
+
+            // Cuerpo Redondo Ámbar
+            c.fillStyle = '#d97706';
+            c.beginPath();
+            c.ellipse(0, 0, 16, 14, 0, 0, Math.PI * 2);
+            c.fill();
+            c.strokeStyle = '#78350f';
+            c.lineWidth = 4;
+            c.stroke();
+
+            // Cabeza
+            c.fillStyle = '#92400e';
+            c.beginPath();
+            c.arc(12, 0, 8, 0, Math.PI * 2);
+            c.fill();
+
+            // Ojos
+            c.fillStyle = '#ffffff';
+            c.beginPath();
+            c.arc(14, -3, 3, 0, Math.PI * 2);
+            c.arc(14, 3, 3, 0, Math.PI * 2);
+            c.fill();
+
+            c.fillStyle = '#000000';
+            c.beginPath();
+            c.arc(15, -3, 1.5, 0, Math.PI * 2);
+            c.arc(15, 3, 1.5, 0, Math.PI * 2);
+            c.fill();
+
+            c.restore();
+        }
+
+        // Renderizar Fondo 2D: Mar y Playa Diagonal
+        function drawBackground() {
+            const w = canvas.width;
+            const h = canvas.height;
+
+            // 1. Mar (Azul Turquesa brillante)
+            ctx.fillStyle = '#0284c7';
+            ctx.fillRect(0, 0, w, h);
+
+            // Olas animadas en el agua
+            ctx.fillStyle = '#0369a1';
+            const time = Date.now() * 0.002;
+            for (let i = 0; i < 5; i++) {
+                ctx.beginPath();
+                ctx.arc((i * 200 + time * 50) % (w + 100), 100 + i * 80, 40, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // 2. Playa de Arena (Arena Dorada brillante)
+            ctx.fillStyle = '#fde047';
+            ctx.beginPath();
+            ctx.moveTo(0, h);
+            ctx.lineTo(w, h);
+            ctx.lineTo(w, h * 0.35);
+            ctx.quadraticCurveTo(w * 0.5, h * 0.5, 0, h * 0.7);
+            ctx.closePath();
+            ctx.fill();
+
+            // Línea de Espuma de Mar Caricatura
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 12;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(w, h * 0.35);
+            ctx.quadraticCurveTo(w * 0.5, h * 0.5, 0, h * 0.7);
+            ctx.stroke();
+
+            // Detalles de Conchitas en la arena
+            ctx.fillStyle = '#f472b6';
+            ctx.beginPath();
+            ctx.arc(w * 0.2, h * 0.85, 6, 0, Math.PI * 2);
+            ctx.arc(w * 0.7, h * 0.9, 8, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Generar Basura
+        function spawnTrash() {
+            trashItems = [];
+            const w = canvas.width;
+            const h = canvas.height;
+
+            for (let i = 0; i < TOTAL_TRASH; i++) {
+                const type = TRASH_TYPES[Math.floor(Math.random() * TRASH_TYPES.length)];
+                trashItems.push({
+                    x: Math.random() * (w - 120) + 60,
+                    y: Math.random() * (h - 120) + 60,
+                    radius: 20,
+                    type: type,
+                    floatOffset: Math.random() * 10
+                });
+            }
+        }
+
+        // Crear Estrellitas al juntar
+        function addSparkles(x, y) {
+            for (let i = 0; i < 10; i++) {
+                sparkles.push({
+                    x: x,
+                    y: y,
+                    vx: (Math.random() - 0.5) * 8,
+                    vy: (Math.random() - 0.5) * 8,
+                    life: 1.0,
+                    color: ['#facc15', '#4ade80', '#38bdf8', '#f472b6'][Math.floor(Math.random() * 4)]
+                });
+            }
+        }
+
+        // Seleccionar Personaje
+        function selectCharacter(type) {
+            selectedCharacter = type;
+            document.getElementById('cardTurtle').className = type === 'turtle'
+                ? "cursor-pointer bg-emerald-300 border-8 border-emerald-600 rounded-2xl p-4 transition-all duration-200 text-center relative card-cartoon group scale-105"
+                : "cursor-pointer bg-emerald-200 border-4 border-emerald-500 hover:bg-emerald-300 rounded-2xl p-4 transition-all duration-200 text-center relative card-cartoon group opacity-80";
+
+            document.getElementById('cardBeetle').className = type === 'beetle'
+                ? "cursor-pointer bg-amber-300 border-8 border-amber-600 rounded-2xl p-4 transition-all duration-200 text-center relative card-cartoon group scale-105"
+                : "cursor-pointer bg-amber-200 border-4 border-amber-500 hover:bg-amber-300 rounded-2xl p-4 transition-all duration-200 text-center relative card-cartoon group opacity-80";
+        }
+
+        // Iniciar Juego
+        function startGame() {
+            sounds.init();
+            document.getElementById('selectionModal').classList.add('hidden');
+            document.getElementById('gameHUD').classList.remove('hidden');
+
+            document.getElementById('hudHeroTitle').textContent = selectedCharacter === 'turtle' ? 'Tortuguita' : 'Escarabajo';
+
+            // Render avatar en HUD
+            const avatarCanvas = document.getElementById('hudAvatarCanvas');
+            const actx = avatarCanvas.getContext('2d');
+            actx.clearRect(0, 0, 48, 48);
+            if (selectedCharacter === 'turtle') {
+                drawTurtleSprite(actx, 24, 24, 15, 0, 0);
+            } else {
+                drawBeetleSprite(actx, 24, 24, 15, 0, 0);
+            }
+
+            score = 0;
+            trashCollected = 0;
+            updateHUD();
+
+            player.x = canvas.width / 2;
+            player.y = canvas.height / 2;
+
+            spawnTrash();
+            gameActive = true;
+        }
+
+        function updateHUD() {
+            document.getElementById('scoreText').textContent = `${score} Pts`;
+            document.getElementById('trashCountText').textContent = `${TOTAL_TRASH - trashCollected}/${TOTAL_TRASH}`;
+
+            const pct = Math.round((trashCollected / TOTAL_TRASH) * 100);
+            document.getElementById('progressBar').style.width = `${pct}%`;
+        }
+
+        function resetToMenu() {
+            gameActive = false;
+            document.getElementById('victoryModal').classList.add('hidden');
+            document.getElementById('gameHUD').classList.add('hidden');
+            document.getElementById('selectionModal').classList.remove('hidden');
+        }
+
+        // Bucle Principal de Renderizado y Física
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            drawBackground();
+
+            if (gameActive) {
+                // Movimiento del Jugador
+                let moveX = 0;
+                let moveY = 0;
+
+                if (keys.ArrowUp || keys.w) moveY -= 1;
+                if (keys.ArrowDown || keys.s) moveY += 1;
+                if (keys.ArrowLeft || keys.a) moveX -= 1;
+                if (keys.ArrowRight || keys.d) moveX += 1;
+
+                if (moveX !== 0 || moveY !== 0) {
+                    player.angle = Math.atan2(moveY, moveX);
+                    player.animFrame += 1;
+
+                    // Determinar velocidad según terreno (Agua vs Arena)
+                    // Si está en la zona de arena
+                    const inSand = (player.y > canvas.height * 0.45 && player.x > canvas.width * 0.3);
+                    let currentSpeed = player.speed;
+
+                    if (selectedCharacter === 'turtle') {
+                        currentSpeed = inSand ? 3.0 : 6.0; // Tortuga vuela en el agua
+                    } else {
+                        currentSpeed = inSand ? 6.0 : 3.0; // Escarabajo vuela en la arena
+                    }
+
+                    player.x += moveX * currentSpeed;
+                    player.y += moveY * currentSpeed;
+
+                    // Mantener dentro del Canvas
+                    player.x = Math.max(30, Math.min(canvas.width - 30, player.x));
+                    player.y = Math.max(30, Math.min(canvas.height - 30, player.y));
+                }
+
+                // Dibujar Basura Caricatura
+                const floatTime = Date.now() * 0.003;
+                trashItems.forEach((item, index) => {
+                    const yOffset = Math.sin(floatTime + item.floatOffset) * 4;
+
+                    ctx.save();
+                    ctx.translate(item.x, item.y + yOffset);
+
+                    // Halo/Sombra
+                    ctx.fillStyle = 'rgba(0,0,0,0.15)';
+                    ctx.beginPath();
+                    ctx.arc(0, 14, 14, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Círculo de fondo colorido
+                    ctx.fillStyle = item.type.color;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, 20, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+
+                    // Emoji de Basura
+                    ctx.font = '22px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(item.type.emoji, 0, 2);
+
+                    ctx.restore();
+
+                    // Colisión con Jugador
+                    const dist = Math.hypot(player.x - item.x, player.y - item.y);
+                    if (dist < player.radius + item.radius) {
+                        // Recolectar!
+                        sounds.playPop();
+                        addSparkles(item.x, item.y);
+                        score += item.type.points;
+                        trashCollected++;
+                        trashItems.splice(index, 1);
+                        updateHUD();
+
+                        if (trashCollected >= TOTAL_TRASH) {
+                            gameActive = false;
+                            sounds.playWin();
+                            setTimeout(() => {
+                                document.getElementById('victoryModal').classList.remove('hidden');
+                            }, 400);
+                        }
+                    }
+                });
+
+                // Dibujar Chispas/Estrellas
+                for (let i = sparkles.length - 1; i >= 0; i--) {
+                    const s = sparkles[i];
+                    s.x += s.vx;
+                    s.y += s.vy;
+                    s.life -= 0.04;
+
+                    ctx.fillStyle = s.color;
+                    ctx.beginPath();
+                    ctx.arc(s.x, s.y, Math.max(1, 6 * s.life), 0, Math.PI * 2);
+                    ctx.fill();
+
+                    if (s.life <= 0) sparkles.splice(i, 1);
+                }
+
+                // Dibujar Personaje
+                if (selectedCharacter === 'turtle') {
+                    drawTurtleSprite(ctx, player.x, player.y, player.radius, player.angle, player.animFrame);
+                } else {
+                    drawBeetleSprite(ctx, player.x, player.y, player.radius, player.angle, player.animFrame);
+                }
+            }
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Configuración Inicial y Ventana
+        window.addEventListener('load', () => {
+            canvas = document.getElementById('gameCanvas');
+            ctx = canvas.getContext('2d');
+
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            // Dibujar Previews en Tarjetas de Selección
+            const prevTurtle = document.getElementById('previewTurtle').getContext('2d');
+            drawTurtleSprite(prevTurtle, 50, 50, 25, 0, 0);
+
+            const prevBeetle = document.getElementById('previewBeetle').getContext('2d');
+            drawBeetleSprite(prevBeetle, 50, 50, 25, 0, 0);
+
+            selectCharacter('turtle');
+
+            // Eventos Teclado
+            window.addEventListener('keydown', (e) => {if (keys.hasOwnProperty(e.key)) keys[e.key] = true;});
+            window.addEventListener('keyup', (e) => {if (keys.hasOwnProperty(e.key)) keys[e.key] = false;});
+
+            // Botones Táctiles Móviles
+            const bindTouch = (id, keyName) => {
+                const btn = document.getElementById(id);
+                if (!btn) return;
+                btn.addEventListener('touchstart', (e) => {e.preventDefault(); keys[keyName] = true;});
+                btn.addEventListener('touchend', (e) => {e.preventDefault(); keys[keyName] = false;});
+            };
+            bindTouch('btnUp', 'ArrowUp');
+            bindTouch('btnDown', 'ArrowDown');
+            bindTouch('btnLeft', 'ArrowLeft');
+            bindTouch('btnRight', 'ArrowRight');
+
+            lucide.createIcons();
+            requestAnimationFrame(gameLoop);
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,223 @@
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap');
+
+:root {
+    --primary-dark: #18bcd2;
+    --sage-green: #ed6424;
+    --forest-green: #f44a80;
+    --terracotta: #37c6ff;
+    --light-bg: #ff0000;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #fcfbfa;
+    color: var(--primary-dark);
+    line-height: 1.6;
+}
+
+header {
+    background-color: var(--primary-dark);
+    color: rgb(233, 22, 131);
+    padding: 2rem 1rem;
+    text-align: center;
+}
+
+/* 1. RESTAURAMOS LA IMAGEN DE FONDO DEL HEADER (MAR/AGUA) */
+.header-principal {
+    background-image: url('marea.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100%;
+    min-height: 200px;
+
+    /* Mascara de desvanecimiento hacia la arena */
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 30%, rgba(0, 0, 0, 0) 100%);
+    mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 30%, rgba(0, 0, 0, 0) 100%);
+}
+
+body {
+    background-image: url('dry-sand-texture-free-photo.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    width: 100%;
+    min-height: 100vh;
+    margin: 0;
+    color: #100101;
+}
+
+/* 2. RELLENO DE BOTELLAS/BASURA DENTRO DEL TEXTO M.A.R.E.A */
+/* --- LETRAS M.A.R.E.A CON GROSOR MEDIO / MÁS DELGADAS --- */
+header h1 {
+    font-size: 4.8rem;
+    margin-bottom: 0.5rem;
+
+    /* Imagen de basura colorida de relleno */
+    background-image: url('Gemini_Generated_Image_ljrs8bljrs8bljrs.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    /* Recorte de texto */
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+
+    display: inline-block;
+
+    /* Tipografía menos gruesa pero clara */
+    font-family: 'Montserrat', 'Trebuchet MS', 'Segoe UI', sans-serif;
+    font-weight: 700;
+    letter-spacing: 4px;
+    /* Un poco de separación entre letras ayuda a distinguirlas mejor */
+
+    /* Borde fino para definir bien el contorno sobre el fondo azul */
+    -webkit-text-stroke: 1px rgba(0, 0, 0, 0.4);
+
+    /* Sombra para despegar las letras del mar */
+    filter: drop-shadow(0px 3px 6px rgba(0, 0, 0, 0.5));
+}
+
+h1 {
+    font-family: 'Montserrat', 'Trebuchet MS', sans-serif;
+    font-weight: 700;
+}
+
+header p {
+    font-size: 1.35rem;
+    color: #ffffff;
+    font-family: 'EB Garamond', serif;
+    font-weight: 700;
+    margin-top: 0.6rem;
+    letter-spacing: 0.5px;
+    
+    /* Sombra intensa para darle máxima presencia sobre el agua */
+    text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.9), 
+                 0px 0px 10px rgba(0, 0, 0, 0.6);
+}
+nav {
+    background-color: var(--forest-green);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.8rem;
+    padding: 0.8rem;
+    flex-wrap: wrap;
+}
+
+/* Estado normal: Texto blanco legibilidad 100% */
+nav a {
+    color: #ffffff;
+    text-decoration: none;
+    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    transition: all 0.2s ease-in-out;
+    display: inline-block;
+}
+
+/* Estado HOVER: Las letras se rellenan con la imagen de basura */
+nav a:hover {
+    background-image: url('Gemini_Generated_Image_ljrs8bljrs8bljrs.jpg'); 
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    /* Recorte de texto para aplicar la imagen dentro */
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+
+    /* Aumentamos levemente el grosor y agregamos borde negro fino para definir las letras */
+    font-weight: 900;
+    -webkit-text-stroke: 1px rgba(0, 0, 0, 0.7);
+
+    /* Sombra ligera para separarlas del fondo rosado */
+    filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.4));
+    letter-spacing: 1.cap;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+section {
+    margin-bottom: 3rem;
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(38, 77, 82, 0.08);
+    border-top: 5px solid var(--sage-green);
+}
+
+h2 {
+    color: var(--primary-dark);
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+}
+
+.intro-text {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+}
+
+.prototypes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-top: 1.5rem;
+}
+
+.card {
+    background-color: #f4ede4;
+    border-radius: 8px;
+    padding: 1.5rem;
+    border-left: 4px solid var(--terracotta);
+}
+
+.card h3 {
+    color: var(--forest-green);
+    margin-bottom: 0.8rem;
+}
+
+.awareness {
+    background-color: var(--primary-dark);
+    color: white;
+    border-top-color: var(--terracotta);
+}
+
+.awareness h2 {
+    color: var(--sage-green);
+}
+
+footer {
+    background-color: var(--primary-dark);
+    color: var(--light-bg);
+    text-align: center;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 600px) {
+    nav {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.8rem;
+    }
+}
